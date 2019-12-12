@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Player 2</title>
+
+</head>
+
+<body>
+
+
+
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
+
+        //axios.defaults.baseURL = '/gamerServer.js';
+
+        var WIDTH = 700;
+        var HEIGHT = 600;
+        var pi = Math.PI;
+
+        var UpArrow = 38;
+        var DownArrow = 40;
+        var canvas, ctx, keystate;
+        var player, ball;
+
+
+        player1 = {
+            x: 0,
+            y: 0,
+
+            width: 20,
+            height: 100,
+
+            update: function () {
+
+                axios.get('/player1CurrentPosX')
+                    .then(response => {
+                        //console.log(response.data);
+                        this.x = response.data;
+                        //console.log(this.x);
+                    })
+                    .catch(error => {
+                        console.log("New x wasn't recieved");
+                    })
+
+                axios.get('/player1CurrentPosY')
+                    .then(response => {
+                        //console.log(response.data);
+                        this.y = response.data;
+                        console.log(this.y);
+                    })
+                    .catch(error => {
+                        console.log("New y wasn't recieved");
+                    })
+
+
+            },
+
+            draw: function () {
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+            }
+
+
+
+        };
+
+        player2 = {
+            x: 0,
+            y: 0,
+
+            width: 20,
+            height: 100,
+
+            update: function () {
+                
+                if (keystate[UpArrow]) {
+
+                    axios.get('/player2UP')
+                        .then(response => {
+                            console.log("up sent");
+                        })
+                        .catch(error => {
+                            console.log("Didnt recieve x");
+                        });
+
+                }
+
+                if (keystate[DownArrow]) {
+                    axios.get('/player2Down')
+                        .then(response => {
+                            console.log("down senti");
+                        })
+                        .catch(error => {
+                            console.log("Didnt recieve y");
+                        });
+                }
+
+                axios.get('/player2CurrentPosX')
+                    .then(response => {
+                        //console.log(response.data);
+                        this.x = response.data;
+                        //console.log(this.x);
+                    })
+                    .catch(error => {
+                        console.log("New x wasn't recieved");
+                    })
+
+                axios.get('/player2CurrentPosY')
+                    .then(response => {
+                        //console.log(response.data);
+                        this.y = response.data;
+                        //console.log(this.y);
+                    })
+                    .catch(error => {
+                        console.log("New y wasn't recieved");
+                    })
+                    
+
+            },
+
+            draw: function () {
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+            }
+
+
+
+        };
+
+
+        function main() {
+
+            canvas = document.createElement("canvas");
+            canvas.width = WIDTH;
+            canvas.height = HEIGHT;
+            ctx = canvas.getContext("2d");
+            document.body.appendChild(canvas);
+
+            keystate = {};
+            document.addEventListener("keydown", function (evt) {
+                keystate[evt.keyCode] = true;
+            });
+            document.addEventListener("keyup", function (evt) {
+                delete keystate[evt.keyCode];
+            });
+
+            init();
+
+            var loop = function () {
+                update();
+                draw();
+
+                window.requestAnimationFrame(loop, canvas);
+            }
+
+            window.requestAnimationFrame(loop, canvas);
+
+        }
+
+        function init() {
+            player1.x = player1.width;
+            player1.y = (HEIGHT - player1.height) / 2;
+
+            player2.x = (WIDTH - player2.width - 2);
+            player2.y = (HEIGHT - player2.height) / 2;
+
+
+        }
+
+        function update() {
+            player1.update();
+            player2.update();
+            ball.update();
+        }
+
+        function draw() {
+
+            ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+            ctx.save();
+
+            ctx.fillStyle = "#fff";
+
+            player1.draw();
+            player2.draw();
+
+
+            ctx.restore();
+
+        }
+
+        main();
+    //axios.defaults.baseURL = '/gamerServer.js';
+
+        /*axios.get('/newPar')
+            .then(response => {
+                document.getElementById("H").innerText = response.data;
+                console.log('It has reached the js file');
+            })
+            .catch(error => {
+                console.log('Error');
+            })
+            */
+    </script>
+
+</body>
+
+</html>

@@ -130,6 +130,47 @@
 
         };
 
+        ball = {
+            x: WIDTH/2,
+            y: HEIGHT/2,
+            r: 70,
+
+            speed: 0,
+
+            update: function (){
+
+                
+                
+                axios.get('/ballUpdateX')
+                .then(response => {
+                    this.x = response.data;
+                })
+                .catch(error => {
+                    console.log("Circle X not good");
+                })
+                
+                
+               
+                axios.get('/ballUpdateY')
+                .then(response => {
+                    this.y = response.data;
+                })
+                .catch(error => {
+                    console.log("Circle Y not good");
+                })
+                
+            },
+
+            draw: function (){
+                ctx.beginPath()
+                ctx.arc(this.x, this.y, 5, 0, 2 * pi, false);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.strokeStyle = '#003300';
+                ctx.stroke();
+            }
+        }
+
 
         function main() {
 
@@ -174,6 +215,23 @@
             player1.update();
             player2.update();
             ball.update();
+
+            axios.get('/getColliderPlayer1')
+            .then(response => {
+                console.log('It worked');
+            })
+            .catch(error => {
+                console.log("Did not detect the collision");
+            })
+
+            
+            axios.get('/getColliderPlayer2')
+            .then(response => {
+                console.log('It worked');
+            })
+            .catch(error => {
+                console.log("Did not detect the collision");
+            })
         }
 
         function draw() {
@@ -186,6 +244,8 @@
 
             player1.draw();
             player2.draw();
+            ball.draw();
+
 
 
             ctx.restore();

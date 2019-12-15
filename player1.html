@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
 
+        var player1Score = 'Player 1 Score: ';
+        var player2Score = 'Player 2 Score: ';
         var dimensions = {
             WIDTH: 0,
             HEIGHT: 0,
@@ -159,7 +161,7 @@
                 })
                 
                 
-               /*
+               
                 axios.get('/ballUpdateY')
                 .then(response => {
                     this.y = response.data;
@@ -167,7 +169,7 @@
                 .catch(error => {
                     console.log("Circle Y not good");
                 })
-                */
+                
             },
 
             draw: function (){
@@ -229,6 +231,7 @@
             player2.x = player2.x;
             player2.y = (HEIGHT - player2.height) / 2;
 
+            ctx.fillText(player1Score, 10, 50);
 
 
         }
@@ -255,6 +258,22 @@
                 console.log("Did not detect the collision");
             })
             
+            axios.get('getPlayer1Score')
+            .then(response => {
+                player1Score = 'Player 1 Score: ' + response.data;
+            })
+            .catch(error => {
+                console.log('Score 1 sent');
+            })
+
+            axios.get('getPlayer2Score')
+            .then(response => {
+                player2Score = 'Player 2 Score: ' + response.data;
+            })
+            .catch(error => {
+                console.log('Score 1 sent');
+            })
+
 
         }
 
@@ -269,6 +288,12 @@
             player1.draw();
             player2.draw();
             ball.draw();
+            
+            ctx.font = "15px Arial";
+            ctx.fillText(player1Score, 10, 50);
+            ctx.fillText(player2Score, 10, 100);
+
+
 
 
 

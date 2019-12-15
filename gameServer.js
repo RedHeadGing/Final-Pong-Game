@@ -7,6 +7,11 @@ const axios = require('axios').default;
 let WIDTH = 700;
 let HEIGHT = 600;
 
+let score = {
+    p1: 0,
+    p2: 0,
+}
+
 let player1 ={
     
     width: 20,
@@ -28,8 +33,8 @@ let player2 ={
 let ball = {
     x: WIDTH/2,
     y: HEIGHT/2,
-    direction: 1.5,
-    speed: .5,
+    direction: 1,
+    speed: 3,
     rad: 5,
 }
 
@@ -38,43 +43,21 @@ let vel = {
     y: ball.speed,
 }
 
-function  collidePlayer1()
-{
-    //let leftX, rightX, topY, bottomY;
-
-    let disX, disY;
-
-    disX = Math.abs(ball.x - player1.x-player1.width/2);
-    disY = Math.abs(ball.y = player1.y - player1.height/2);
-
-    if(disX <= (player1.width/2)) {return true;}
-    if(disY <= (player1.height/2)) {return true;}
-    
-    return false;
-
-    //disX = Math.abs()
-
-    //Getting parameters the range of the first pannel
-    /*leftX = player1.width/2 - player1.x;
-    rightX = player1.width/2 + player1.x;
-    topY = Math.abs(player1.y - player1.height/2);
-    bottomY = player1.height/2 + player1.y;
-
-    let radLeft, radRight, radTop, radBottom;
-
-    radLeft = ball.x - ball.rad;
-    console.log('It got into the collider');
-
-    if(radLeft >= leftX && radLeft <= rightX && ball.y >= topY && ball.y <= bottomY)
-    {
-        
-        return true;
-    }
-    else{
-        return false;
-    }
-    */
+let normal = {
+    x: 0,
+    y: 0,
 }
+let velVector = {
+    x: 0,
+    y: 0,
+}
+
+let refVector = {
+    x:0,
+    y:0,
+}
+
+
 //Recieving Data for player one
 console.log("Loading Player 1");
 app1.get("/", (req, res) => {
@@ -89,17 +72,6 @@ app1.get("/p2", (req, res) => {
     res.sendFile(path.join(__dirname, "/player2.html"));
 }) 
 
-
-/*
-app1.get("/player", (req, res) => {
-    var newPar = 'This is from the javascript';
-    res.send(newPar);
-})*/
-
-/*app1.use("/player1", (req, res) => {
-    console.log('This is from the server');
-    console.log()
-})*/
 
 app1.get('/player1UP', (req, res) =>{
     player1.y -= 7;
@@ -153,17 +125,27 @@ app1.get('/player2CurrentPosY', (req, res) => {
     res.send(y);
 })
 
-
+ 
 app1.get('/ballUpdateX', (req, res) => {
     if(ball.x > WIDTH)
     {
         vel.x = vel.x * -1;
+        ball.x = WIDTH/2;
+        ball.y = HEIGHT/2;
+        ball.direction = Math.random(2);
+
+        score.p1 += 1;
     }
     if(ball.x < 0)
     {
         vel.x = vel.x * -1;
+        ball.x = WIDTH/2;
+        ball.y = HEIGHT/2;
+        ball.direction = Math.random(2)
+
+        score.p2 += 1;
     }
-    ball.x += vel.x;
+    ball.x += Math.cos(ball.direction) * vel.x;
     //console.log(ball.x);
     var x =  '' + ball.x;
     res.send(x);
@@ -172,7 +154,7 @@ app1.get('/ballUpdateX', (req, res) => {
 
 
 app1.get('/ballUpdateY', (req, res) => {
-
+    
     if(ball.y > HEIGHT)
     {
         vel.y = vel.y * -1;
@@ -181,7 +163,7 @@ app1.get('/ballUpdateY', (req, res) => {
     {
         vel.y = vel.y * -1;
     }
-    ball.y += vel.y;
+    ball.y += Math.sin(ball.direction) * vel.y;
     console.log(ball.y);
     var y =  '' + ball.y;
     res.send(y);
@@ -200,10 +182,10 @@ app1.get('/getColliderPlayer1', (req, res) => {
     let radLeft, radRight, radTop, radBottom;
 
     radLeft = Math.abs(ball.x - ball.rad);
-    console.log(rightX);
-    console.log(radLeft);
+    //console.log(rightX);
+    //console.log(radLeft);
 
-    console.log('It got into the collider');
+    //console.log('It got into the collider');
 
     /*
     if(radLeft >= leftX && radLeft <= rightX && ball.y >= topY && ball.y <= bottomY)
@@ -213,7 +195,7 @@ app1.get('/getColliderPlayer1', (req, res) => {
     }
     */
     
-    if(radLeft <= rightX)
+    if(radLeft <= rightX && ball.y >= topY && ball.y <= bottomY)
     {
         collision = true;
     }
@@ -222,7 +204,7 @@ app1.get('/getColliderPlayer1', (req, res) => {
         /*
         let angle, length;
 
-        angle = Math.atan(ball.y, ball.x);
+        angle = Mamth.atan(ball.y, ball.x);
         length = Math.sqrt(ball.x * ball.x + ball.y*ball.y);
 
         ball.x = Math.cos(angle) * length;
@@ -265,16 +247,15 @@ app1.get('/getColliderPlayer2', (req, res) => {
     }
     */
     
-    if(radRight >= leftX)
-    {
-        collision = true;
-    }
 
     //collision = collidePlayer1();
     if(collision == true)
-    {
+    {   
+
+        
         vel.x = vel.x * -1;
         ball.x += vel.x;
+        
         //console.log(ball.x);
     }
 
@@ -282,6 +263,38 @@ app1.get('/getColliderPlayer2', (req, res) => {
     res.send(x);
 })
 
+
+app1.get('/getColliderPlayer2', (req, res) => {
+    var collision = false;
+
+    let leftX, rightX, topY, bottomY;
+    leftX = Math.abs(player2.x);
+    rightX = Math.abs(player2.width + player2.x);
+    topY = Math.abs(player2.y);
+    bottomY = player2.height + player2.y;
+
+    let radLeft, radRight, radTop, radBottom;
+
+    radRight = Math.abs(ball.x + ball.rad);
+
+    if(radRight >= leftX && ball.y >= topY && ball.y <= bottomY)
+    {
+        collision = true;
+    }
+
+    if(collision == true)
+    {   
+
+        
+        vel.x = vel.x * -1;
+        ball.x += vel.x;
+        
+        //console.log(ball.x);
+    }
+
+    var x =  '' + ball.x;
+    res.send(x);
+})
 
 
 //Retries data from player1 of position of player1
@@ -293,6 +306,16 @@ app1.get('/player1/:playerPos', (req, res) =>{
     //console.log(JSON.stringify(req.params["playerPos"]));
 })
 */
+
+app1.get('/getPlayer1Score', (req, res) => {
+    let s = '' + score.p1;
+    res.send(s);
+})
+
+app1.get('/getPlayer2Score', (req, res) => {
+    let s = '' + score.p2;
+    res.send(s);
+})
 
 app1.listen(7000, function(err){
     if(err)

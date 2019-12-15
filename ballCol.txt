@@ -1,0 +1,30 @@
+velVector.x = Math.cos(ball.direction);
+        velVector.y = Math.sin(ball.direction);
+
+        var newX = player1.x / player1.width;
+        var newY = player1.y/ player1.height;
+        
+        normal.x = newX;
+        normal.y = newY;
+        
+        if(Math.abs(normal.x) < Math.abs(normal.y)){
+            normal.x = 0;
+          }
+          else
+          {
+            normal.y = 0;
+          }
+
+          let length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+          normal.x = normal.x / length;
+          normal.y = normal.y / length;
+
+          var scalar = 2 * velVector.x * normal.x + velVector.y * normal.y;
+
+          normal.x *= scalar;
+          normal.y *= scalar;
+
+          refVector.x = velVector.x - normal.x;
+          refVector.y = velVector.y - normal.y;
+
+          ball.direction = Math.atan2(refVector.y, refVector.x);

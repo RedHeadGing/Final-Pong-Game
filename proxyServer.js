@@ -13,6 +13,7 @@ var server = https.createServer(
     console.log("Proxying to 7000");
     proxy.web(req, res, {
       target: 'http://206.189.67.118:7000',
+      target: 'http://206.189.67.118:7000/p2'
     }
     );
   });

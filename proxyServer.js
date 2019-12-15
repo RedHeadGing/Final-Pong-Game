@@ -1,5 +1,5 @@
   
-const https = require('http');
+const https = require('https');
 const httpProxy = require('http-proxy');
 const fs = require("fs");
 

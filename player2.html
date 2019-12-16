@@ -58,6 +58,8 @@
                         console.log("New y wasn't recieved");
                     })
 
+                    
+
 
             },
 
@@ -235,6 +237,22 @@
             .catch(error => {
                 console.log("Did not detect the collision");
             })
+
+            axios.get('/getPlayer1Score')
+            .then(response => {
+                player1Score = 'Player 1 Score: ' + response.data;
+            })
+            .catch(error => {
+                console.log('Score 1 sent');
+            })
+
+            axios.get('/getPlayer2Score')
+            .then(response => {
+                player2Score = 'Player 2 Score: ' + response.data;
+            })
+            .catch(error => {
+                console.log('Score 1 sent');
+            })
         }
 
         function draw() {
@@ -249,7 +267,9 @@
             player2.draw();
             ball.draw();
 
-
+            ctx.font = "15px Arial";
+            ctx.fillText(player1Score, 10, 50);
+            ctx.fillText(player2Score, 10, 100);
 
             ctx.restore();
 

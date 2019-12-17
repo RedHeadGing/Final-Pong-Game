@@ -74,13 +74,19 @@ app1.get("/p2", (req, res) => {
 
 
 app1.get('/player1UP', (req, res) =>{
-    player1.y -= 7;
+
+    if(player1.y >= 0)
+    {
+        player1.y -= 7;
+    }
     res.send(true);
 })
 
 app1.get('/player1Down', (req, res) =>{
     console.log("In player 1 down");
-    player1.y += 7;
+    if((player1.y + player1.height) <= HEIGHT){
+        player1.y += 7;
+    }
     console.log(player1.y);
     res.send(true);
 
@@ -100,13 +106,18 @@ app1.get('/player1CurrentPosY', (req, res) => {
 })
 
 app1.get('/player2UP', (req, res) =>{
-    player2.y -= 7;
+    if(player2.y >= 0)
+    {
+        player2.y -= 7;
+    }
     res.send(true);
 })
 
 app1.get('/player2Down', (req, res) =>{
     console.log("In player 1 down");
-    player2.y += 7;
+    if((player2.y + player2.height) <= HEIGHT){
+        player2.y += 7;
+    }
     console.log(player1.y);
     res.send(true);
 
